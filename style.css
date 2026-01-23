@@ -1,0 +1,83 @@
+/* 1. CSS RESET & BOX MODEL */
+/* This ensures padding/border don't increase the width of elements */
+*, *::before, *::after {
+  box-sizing: border-box;
+}
+
+/* Remove default margins for common elements */
+* {
+  margin: 0;
+  padding: 0;
+}
+
+/* Improve media defaults */
+img, picture, video, canvas, svg {
+  display: block;
+  max-width: 100%;
+}
+
+/* Remove list styles (you'll almost always do this for menus) */
+ul, ol {
+  list-style: none;
+}
+
+/* 2. ROOT VARIABLES */
+/* Perfect for maintaining colors and spacing throughout your TOP projects */
+:root {
+  --primary-color: #3b82f6;
+  --text-main: #1f2937;
+  --bg-light: #f3f4f6;
+  --font-main: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
+/* 3. BASE STYLES */
+html {
+  /* Smooth scrolling for anchor links */
+  scroll-behavior: smooth;
+}
+
+body {
+  line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  font-family: var(--font-main);
+  color: var(--text-main);
+  background-color: white;
+  min-height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+    width: 400px;
+    height: 400px;
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    border: 0.5px dotted grey;
+}
+
+.digits {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.row {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+}
+
+.operations {
+    display: flex;
+    flex-direction: column;
+    /* justify-content: space-between; */
+    gap: 20px;
+}
+
+.btn {
+    padding: 10px;
+    flex: auto;
+}
