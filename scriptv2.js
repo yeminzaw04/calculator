@@ -2,12 +2,12 @@
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
-const divide = (a, b) => a / b;
+const divide = (a, b) => b === 0 ? "ERROR" : a / b;
 
 // Get values for an operation
 // let firstOperand = Number(prompt("Enter a number:"));
 // let secondOperand = Number(prompt("Enter another number:"));
-// let operator = prompt("What would you like to do: add, subract, multiply, or divide?");
+// let operator = prompt("What would you like to do: add, subtract, multiply, or divide?");
 
 // Handle calculation
 const calculate = (operator, firstOperand, secondOperand) => {
@@ -32,7 +32,6 @@ const operation = {
     prevOperator: "",
     result: null,
     isEqualClicked: false,
-    isOperatorClicked: false,
     operate() {
         this.result = calculate(this.operator, Number(this.firstOperand), Number(this.secondOperand));
         this.firstOperand = String(this.result);
@@ -42,8 +41,11 @@ const operation = {
         this.prevOperator = this.operator;
         this.operator = "";
     },
-    displayResult() {
-        console.log(this.firstOperand);
+    updateDisplay() {
+        let left = this.firstOperand ? this.firstOperand : "0";
+        let middle = this.operator ? this.operator : "";
+        let right = this.secondOperand ? this.secondOperand : "";
+        console.log(`${left} ${middle} ${right}`);
     },
     clear() {
         this.firstOperand = "";
@@ -53,7 +55,6 @@ const operation = {
         this.prevOperator = "";
         this.result = null;
         this.isEqualClicked = false;
-        this.isOperatorClicked = false;
     },
 };
 
@@ -67,19 +68,33 @@ container.addEventListener('click', function (event) {
     if (target.closest('.digits')) {
         if (operation.operator) {
             operation.secondOperand += target.textContent;
+            operation.updateDisplay();
         } else {
             if (operation.isEqualClicked) {
-                operation.clear();
-                // operation.firstOperand = "";
+                // operation.clear(); "Hard Reset"
+                operation.firstOperand = ""; // "Soft Reset"
                 operation.isEqualClicked = false;
             }
             operation.firstOperand += target.textContent;
+            operation.updateDisplay();
         }
+    }
+
+    if (target.closest('.clear')) {
+        operation.clear();
+        operation.updateDisplay();
     }
 
     if (target.closest('.operations')) {
         if (!operation.firstOperand) return;
+
+        // Chain operations
+        if (operation.secondOperand) {
+            operation.operate();
+        }
+
         operation.operator = target.textContent;
+        operation.updateDisplay();
     }
 
     if (target.closest('.equal')) {
@@ -99,7 +114,9 @@ container.addEventListener('click', function (event) {
         }
 
         operation.operate();
-        operation.displayResult();
+        operation.updateDisplay();
         operation.isEqualClicked = true;
     }
 });
+
+operation.updateDisplay();
