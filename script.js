@@ -27,7 +27,10 @@ const operate = (operator, firstOperand, secondOperand) => {
 let firstOperand = "";
 let secondOperand = "";
 let operator;
+let prevSecondOperand;
 let result;
+let isEqualClicked = false;
+let isOperatorClicked = false;
 
 const container = document.querySelector(".container");
 container.addEventListener('click', event => {
@@ -38,6 +41,7 @@ container.addEventListener('click', event => {
 
     // If a digit is clicked, set first operand and second operand
     if (target.closest('.digits')) {
+        if (isEqualClicked) clear();
         // If there is no operator yet, get first operand
         if (!operator) {
             // Concatenation is used to join numbers as string before doing number operations
@@ -45,36 +49,69 @@ container.addEventListener('click', event => {
             if (!result) {
                 firstOperand = String(firstOperand) + target.textContent;
             } else {
-                firstOperand = "";
-                firstOperand = String(firstOperand) + target.textContent;
+                firstOperand = target.textContent;
+                result = null;
             }
-        // Get second operand after we get operator
+            // Get second operand after we get operator
         } else {
-            secondOperand = String(secondOperand) + target.textContent;
+            if (!result) {
+                secondOperand = String(secondOperand) + target.textContent;
+            } else {
+                secondOperand = target.textContent;
+                result = null;
+            }
         }
     }
 
-    // Get an operator if there is already a first operand
+    if (target.closest('.equal')) {
+        if (isOperatorClicked) {
+            isOperatorClicked = false;
+            secondOperand = prevSecondOperand;
+            console.log(secondOperand, "Testing")
+        }
+
+        if (operator && firstOperand && secondOperand) {
+            result = operate(operator, Number(firstOperand), Number(secondOperand));
+            firstOperand = result;
+            isEqualClicked = true;
+            console.log(result);
+        }
+    }
+
+    if (target.closest('.operations')) {
+        if (isEqualClicked) {
+            secondOperand = 0;
+            isEqualClicked = false;
+        }
+
+        // if (firstOperand && !secondOperand) {
+        //     secondOperand = firstOperand;
+        // }
+
+        if (operator && firstOperand && secondOperand) {
+            result = operate(operator, Number(firstOperand), Number(secondOperand));
+            console.log(result);
+            firstOperand = result;
+            prevSecondOperand = secondOperand;
+            secondOperand = 0; // START FROM HERE
+            operator = null;
+            isOperatorClicked = true;
+        }
+    }
+
+      // Get an operator if there is already a first operand
     if (target.closest('.operations')) {
         if (firstOperand) {
             operator = target.textContent;
         }
-
-    }
-
-    // Do operation and display result
-    // First check - if equal or any operation is clicked
-    if (target.closest('.equal') || target.closest('.operations')) {
-        // Second check - if there is all 3 parts of an operation
-        if (operator && firstOperand && secondOperand) {
-            result = operate(operator, Number(firstOperand), Number(secondOperand));
-            // Dummy display
-            alert (result);
-            // Prepare for next operation
-            firstOperand = result;
-            secondOperand = 0; // Second operand is falsy placeholder ready to receive the value for next operation
-            // If any operator is clicked second time, keep it for next operation, otherwise it is null
-            operator = target.closest(".operations") ? target.textContent : null;
-        }
     }
 });
+
+const clear = () => {
+    operator = null;
+    firstOperand = "";
+    secondOperand = "";
+    result = null;
+    isEqualClicked = false;
+    isOperatorClicked = false;
+}
