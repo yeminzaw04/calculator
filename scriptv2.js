@@ -50,7 +50,8 @@ const operation = {
         let left = this.firstOperand ? this.firstOperand : "0";
         let middle = this.operator ? this.operator : "";
         let right = this.secondOperand ? this.secondOperand : "";
-        console.log(`${left} ${middle} ${right}`);
+        // console.log(`${left} ${middle} ${right}`);
+        displayText.textContent = `${left} ${middle} ${right}`;
     },
     clear() {
         this.firstOperand = "";
@@ -65,6 +66,9 @@ const operation = {
 
 const container = document.querySelector('.container');
 const decimal = container.querySelector('.decimal');
+const displayContainer = document.createElement('div');
+const displayText = document.createElement('p');
+displayContainer.classList.add('display-container');
 
 container.addEventListener('click', function (event) {
     // Select target clicked
@@ -90,11 +94,16 @@ container.addEventListener('click', function (event) {
             if (operation.firstOperand === "ERROR") {
                 operation.clear(); // Hard Reset
             }
+
             // Clear only the first operand if equal was clicked and want to start a new operation
             if (operation.isEqualClicked) {
+                // if (target !== decimal) {
+                //     operation.firstOperand = ""; // Soft Reset
+                // }
                 operation.firstOperand = ""; // Soft Reset
                 operation.isEqualClicked = false;
             }
+
             // If it contains one decimal already and decimal is clicked again, don't do concatenation
             if (!(operation.firstOperand.includes('.') && target === decimal)) {
                 operation.firstOperand += target.textContent;
@@ -153,3 +162,5 @@ container.addEventListener('click', function (event) {
 });
 
 operation.updateDisplay();
+displayContainer.appendChild(displayText)
+container.appendChild(displayContainer);
