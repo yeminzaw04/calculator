@@ -2,7 +2,7 @@
 const add = (a, b) => a + b;
 const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
-const divide = (a, b) => b === 0 ? "ERROR" : a / b;
+const divide = (a, b) => a / b;
 
 // Get values for an operation
 // let firstOperand = Number(prompt("Enter a number:"));
@@ -19,6 +19,7 @@ const calculate = (operator, firstOperand, secondOperand) => {
         case "*":
             return multiply(firstOperand, secondOperand);
         case "/":
+            if (secondOperand === 0) return "ERROR";
             return divide(firstOperand, secondOperand);
     }
     return firstOperand;
@@ -34,7 +35,11 @@ const operation = {
     isEqualClicked: false,
     operate() {
         this.result = calculate(this.operator, Number(this.firstOperand), Number(this.secondOperand));
-        this.firstOperand = String(this.result);
+        if (this.result === "ERROR") {
+            this.firstOperand = "ERROR";
+        } else {
+            this.firstOperand = String(Number(this.result.toFixed(2)));
+        }
         this.result = null;
         this.prevSecondOperand = this.secondOperand;
         this.secondOperand = "";
@@ -59,6 +64,8 @@ const operation = {
 };
 
 const container = document.querySelector('.container');
+const decimal = container.querySelector('.decimal');
+
 container.addEventListener('click', function (event) {
     // Select target clicked
     target = event.target;
@@ -66,18 +73,32 @@ container.addEventListener('click', function (event) {
     if (!target.closest('.btn')) return;
 
     if (target.closest('.digits')) {
+        // Prevent leading decimal by adding a zero
+        if (!operation.firstOperand && (target === decimal)) operation.firstOperand = '0';
+
+        // Decide first operand or second operand by checking if there is operator
         if (operation.operator) {
-            operation.secondOperand += target.textContent;
-            operation.updateDisplay();
+            if (!operation.secondOperand && (target === decimal)) operation.secondOperand = '0';
+            // If it contains one decimal already and decimal is clicked again, don't do concatenation
+            if (!(operation.secondOperand.includes('.') && target === decimal)) {
+                operation.secondOperand += target.textContent;
+            }
         } else {
+            // Clear everything first, then change from ERROR to whatever digit we want
+            if (operation.firstOperand === "ERROR") {
+                operation.clear(); // Hard Reset
+            }
+            // Clear only the first operand if equal was clicked and want to start a new operation
             if (operation.isEqualClicked) {
-                // operation.clear(); "Hard Reset"
-                operation.firstOperand = ""; // "Soft Reset"
+                operation.firstOperand = ""; // Soft Reset
                 operation.isEqualClicked = false;
             }
-            operation.firstOperand += target.textContent;
-            operation.updateDisplay();
+            // If it contains one decimal already and decimal is clicked again, don't do concatenation
+            if (!(operation.firstOperand.includes('.') && target === decimal)) {
+                operation.firstOperand += target.textContent;
+            }
         }
+        operation.updateDisplay();
     }
 
     if (target.closest('.clear')) {
@@ -86,21 +107,27 @@ container.addEventListener('click', function (event) {
     }
 
     if (target.closest('.operations')) {
-        if (!operation.firstOperand) return;
+        // Exit if there is no first operand
+        // if (!operation.firstOperand || operation.firstOperand === "ERROR") return;
+        if (operation.firstOperand === "ERROR") return;
+        if (!operation.firstOperand) operation.firstOperand = "0";
 
         // Chain operations
         if (operation.secondOperand) {
             operation.operate();
         }
 
-        operation.operator = target.textContent;
+        // Get an operator only if first operand is not ERROR
+        if (operation.firstOperand !== "ERROR") {
+            operation.operator = target.textContent;
+        }
+
         operation.updateDisplay();
     }
 
     if (target.closest('.equal')) {
-
-        // If no first operand, exit early
-        if (!operation.firstOperand) return;
+        // Exit early if no first operand or first operand is ERROR
+        if (!operation.firstOperand || operation.firstOperand === "ERROR") return;
 
         // If no second operand, copy from first operand
         if (operation.operator && !operation.secondOperand) {
