@@ -38,7 +38,7 @@ const operation = {
         if (this.result === "ERROR") {
             this.firstOperand = "ERROR";
         } else {
-            this.firstOperand = String(Number(this.result.toFixed(2)));
+            this.firstOperand = String(Number(this.result.toFixed(10)));
         }
         this.result = null;
         this.prevSecondOperand = this.secondOperand;
@@ -78,12 +78,14 @@ container.addEventListener('click', function (event) {
 
         // Decide first operand or second operand by checking if there is operator
         if (operation.operator) {
+            // Get second operand
             if (!operation.secondOperand && (target === decimal)) operation.secondOperand = '0';
             // If it contains one decimal already and decimal is clicked again, don't do concatenation
             if (!(operation.secondOperand.includes('.') && target === decimal)) {
                 operation.secondOperand += target.textContent;
             }
         } else {
+            // Get first operand
             // Clear everything first, then change from ERROR to whatever digit we want
             if (operation.firstOperand === "ERROR") {
                 operation.clear(); // Hard Reset
@@ -98,6 +100,7 @@ container.addEventListener('click', function (event) {
                 operation.firstOperand += target.textContent;
             }
         }
+
         operation.updateDisplay();
     }
 
@@ -118,6 +121,7 @@ container.addEventListener('click', function (event) {
         }
 
         // Get an operator only if first operand is not ERROR
+        // This first operand being "ERROR" is not caught at the beginning since it is after calling operate()
         if (operation.firstOperand !== "ERROR") {
             operation.operator = target.textContent;
         }
@@ -140,9 +144,11 @@ container.addEventListener('click', function (event) {
             operation.secondOperand = operation.prevSecondOperand;
         }
 
-        operation.operate();
-        operation.updateDisplay();
-        operation.isEqualClicked = true;
+        if (operation.operator || operation.prevOperator) {
+            operation.operate();
+            operation.updateDisplay();
+            operation.isEqualClicked = true;
+        }
     }
 });
 
