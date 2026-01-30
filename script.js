@@ -84,10 +84,6 @@ container.addEventListener('click', event => {
             isEqualClicked = false;
         }
 
-        // if (firstOperand && !secondOperand) {
-        //     secondOperand = firstOperand;
-        // }
-
         if (operator && firstOperand && secondOperand) {
             result = operate(operator, Number(firstOperand), Number(secondOperand));
             console.log(result);

@@ -59,17 +59,40 @@ body {
     width: 100vw;
     height: 100vh;
     display: flex;
-    flex-direction: row;
-    justify-content: space-around;
+    flex-direction: column;
     align-items: center;
-    border: 0.5px dotted grey;
+    gap: 10px;
 }
 
 .display-container {
-    width: 300px;
+    width: 50vw;
     height: 100px;
-    font-size: 30px;
-    padding: 40px;
+    font-size: 2rem;
+    padding: 20px;
+    display: flex;
+    justify-content: center;
+    border: 0.5px solid gray;
+    margin-top: 10px;
+    overflow: hidden;
+}
+
+.btn {
+    font-size: 20px;
+    padding: 20px;
+    flex: auto;
+}
+
+/* Copied hover effect from W3Schools */
+.btn:hover {background-color: black;color: white;}
+
+.clear {
+    color: red;
+}
+
+.calculator {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
 
 .digits {
@@ -78,26 +101,20 @@ body {
     gap: 10px;
 }
 
-.row {
+.digit {
     display: flex;
     flex-direction: row;
     gap: 10px;
 }
 
-
-.operations {
+.operations-container {
     display: flex;
     flex-direction: column;
-    /* justify-content: space-between; */
-    gap: 20px;
+    gap: 10px;
 }
 
-.btn {
-    font-size: 30px;
-    padding: 40px;
-    flex: auto;
-}
-
-.clear {
-    color: red;
+.specials-container {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
 }
