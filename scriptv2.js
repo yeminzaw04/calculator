@@ -4,11 +4,6 @@ const subtract = (a, b) => a - b;
 const multiply = (a, b) => a * b;
 const divide = (a, b) => a / b;
 
-// Get values for operation through user before getting button events
-// let firstOperand = Number(prompt("Enter a number:"));
-// let secondOperand = Number(prompt("Enter another number:"));
-// let operator = prompt("What would you like to do: add, subtract, multiply, or divide?");
-
 // Handle calculation
 const calculate = (operator, firstOperand, secondOperand) => {
     switch (operator) {
@@ -77,12 +72,7 @@ const container = document.querySelector('.container');
 const decimal = container.querySelector('.decimal');
 const displayText = container.querySelector('.display-text');
 
-container.addEventListener('click', function (event) {
-    // Select target clicked
-    target = event.target;
-    // Guard clause (to not fire any event if it's not a button)
-    if (!target.closest('.btn')) return;
-
+const formOperation = target => {
     if (target.closest('.digit')) {
         // Prevent leading decimal by adding a zero
         if (!operation.firstOperand && (target === decimal)) operation.firstOperand = '0';
@@ -117,15 +107,11 @@ container.addEventListener('click', function (event) {
                 operation.firstOperand += target.textContent;
             }
         }
-
         operation.updateDisplay();
     }
+};
 
-    if (target.closest('.clear')) {
-        operation.clear();
-        operation.updateDisplay();
-    }
-
+const handleOperation = target => {
     if (target.closest('.operation')) {
         // Exit if previous operation results in ERROR
         if (operation.firstOperand === "ERROR") return;
@@ -146,7 +132,9 @@ container.addEventListener('click', function (event) {
 
         operation.updateDisplay();
     }
+};
 
+const handleEqual = target => {
     if (target.closest('.equal')) {
         // Exit if no first operand or previous operation results in ERROR
         if (!operation.firstOperand || operation.firstOperand === "ERROR") return;
@@ -169,7 +157,9 @@ container.addEventListener('click', function (event) {
             operation.isEqualClicked = true;
         }
     }
+};
 
+const handleBack = target => {
     if (target.closest('.back')) {
         operation.isEqualClicked = false;
         if (operation.secondOperand) {
@@ -183,6 +173,56 @@ container.addEventListener('click', function (event) {
         }
         operation.updateDisplay();
     }
+};
+
+const handleClearOperation = target => {
+    if (target.closest('.clear')) {
+        operation.clear();
+        operation.updateDisplay();
+    }
+};
+
+// Keyboard Events
+document.addEventListener('keydown', function (event) {
+    let key = event.key;
+
+    if (key === 'Enter') key = '=';
+    if (key === 'Escape') key = 'Backspace';
+
+    // Select target clicked
+    const target = document.querySelector(`button[data-key="${key}"]`);
+
+    // Guard clause (to not fire any event if it's unrelated key)
+    if (!target) return;
+
+    formOperation(target);
+
+    handleOperation(target);
+
+    handleEqual(target);
+
+    handleClearOperation(target);
+
+    handleBack(target);
 });
 
+// Click Events
+document.addEventListener('click', function (event) {
+    // Select target clicked
+    const target = event.target;
+    // Guard clause (to not fire any event if it's not a button)
+    if (!target.closest('.btn')) return;
+
+    formOperation(target);
+
+    handleOperation(target);
+
+    handleEqual(target);
+
+    handleClearOperation(target);
+
+    handleBack(target);
+});
+
+// Initial Display
 operation.updateDisplay();
