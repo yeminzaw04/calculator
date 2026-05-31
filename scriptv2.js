@@ -72,114 +72,112 @@ const container = document.querySelector('.container');
 const decimal = container.querySelector('.decimal');
 const displayText = container.querySelector('.display-text');
 
-const formOperation = target => {
-    if (target.closest('.digit')) {
-        // Prevent leading decimal by adding a zero
-        if (!operation.firstOperand && (target === decimal)) operation.firstOperand = '0';
+const handleOperands = target => {
+    // Prevent leading decimal by adding a zero
+    if (!operation.firstOperand && (target === decimal)) operation.firstOperand = '0';
 
-        // Decide first operand or second operand by checking if there is operator
-        if (operation.operator) {
-            // Get second operand
-            if (!operation.secondOperand && (target === decimal)) operation.secondOperand = '0';
-            // If it contains one decimal already and decimal is clicked again, don't do concatenation
-            if (!(operation.secondOperand.includes('.') && target === decimal)) {
-                operation.secondOperand += target.textContent;
-            }
-        } else {
-            // Get first operand
-            // First clear everything if previous operation (first operand) results in ERROR
-            if (operation.firstOperand === "ERROR") {
-                operation.clear(); // Hard Reset
-            }
-
-            // Clear only the first operand if equal was clicked and want to start a new operation
-            if (operation.isEqualClicked) {
-                // Reset first operand if target is anything other than decimal point
-                // Otherwise, keep first operand to append after decimal point
-                if (target !== decimal) {
-                    operation.firstOperand = "";
-                }
-                operation.isEqualClicked = false;
-            }
-
-            // If it contains one decimal already and decimal is clicked again, don't do concatenation
-            if (!(operation.firstOperand.includes('.') && target === decimal)) {
-                operation.firstOperand += target.textContent;
-            }
+    // Decide first operand or second operand by checking if there is operator
+    if (operation.operator) {
+        // Get second operand
+        if (!operation.secondOperand && (target === decimal)) operation.secondOperand = '0';
+        // If it contains one decimal already and decimal is clicked again, don't do concatenation
+        if (!(operation.secondOperand.includes('.') && target === decimal)) {
+            operation.secondOperand += target.textContent;
         }
-        operation.updateDisplay();
+    } else {
+        // Get first operand
+        // First clear everything if previous operation (first operand) results in ERROR
+        if (operation.firstOperand === "ERROR") {
+            operation.clear(); // Hard Reset
+        }
+
+        // Clear only the first operand if equal was clicked and want to start a new operation
+        if (operation.isEqualClicked) {
+            // Reset first operand if target is anything other than decimal point
+            // Otherwise, keep first operand to append after decimal point
+            if (target !== decimal) {
+                operation.firstOperand = "";
+            }
+            operation.isEqualClicked = false;
+        }
+
+        // If it contains one decimal already and decimal is clicked again, don't do concatenation
+        if (!(operation.firstOperand.includes('.') && target === decimal)) {
+            operation.firstOperand += target.textContent;
+        }
     }
+    operation.updateDisplay();
 };
 
 const handleOperation = target => {
-    if (target.closest('.operation')) {
-        // Exit if previous operation results in ERROR
-        if (operation.firstOperand === "ERROR") return;
+    // Exit if previous operation results in ERROR
+    if (operation.firstOperand === "ERROR") return;
 
-        // Determine first operand if any operator is clicked when there is no first operand
-        if (!operation.firstOperand) operation.firstOperand = "0";
+    // Determine first operand if any operator is clicked when there is no first operand
+    if (!operation.firstOperand) operation.firstOperand = "0";
 
-        // Chain operations if there is second operand AND any operator is clicked
-        if (operation.secondOperand) {
-            operation.operate();
-        }
-
-        // Get an operator only if first operand is not ERROR
-        // This first operand being "ERROR" is not caught at the beginning until next operation since it is after calling operate()
-        if (operation.firstOperand !== "ERROR") {
-            operation.operator = target.textContent;
-        }
-
-        operation.updateDisplay();
+    // Chain operations if there is second operand AND any operator is clicked
+    if (operation.secondOperand) {
+        operation.operate();
     }
+
+    // Get an operator only if first operand is not ERROR
+    // This first operand being "ERROR" is not caught at the beginning until next operation since it is after calling operate()
+    if (operation.firstOperand !== "ERROR") {
+        operation.operator = target.textContent;
+    }
+
+    operation.updateDisplay();
 };
 
 const handleEqual = target => {
-    if (target.closest('.equal')) {
-        // Exit if no first operand or previous operation results in ERROR
-        if (!operation.firstOperand || operation.firstOperand === "ERROR") return;
+    // Exit if no first operand or previous operation results in ERROR
+    if (!operation.firstOperand || operation.firstOperand === "ERROR") return;
 
-        // If no second operand, copy from first operand
-        if (operation.operator && !operation.secondOperand) {
-            operation.secondOperand = operation.firstOperand;
-        }
+    // If no second operand, copy from first operand
+    if (operation.operator && !operation.secondOperand) {
+        operation.secondOperand = operation.firstOperand;
+    }
 
-        // If no operator but have previous operation
-        if (!operation.operator && operation.prevOperator) {
-            operation.operator = operation.prevOperator;
-            operation.secondOperand = operation.prevSecondOperand;
-        }
+    // If no operator but have previous operation
+    if (!operation.operator && operation.prevOperator) {
+        operation.operator = operation.prevOperator;
+        operation.secondOperand = operation.prevSecondOperand;
+    }
 
-        // Operate only if there is operator (with or without second operand) OR previous operation
-        if (operation.operator || operation.prevOperator) {
-            operation.operate();
-            operation.updateDisplay();
-            operation.isEqualClicked = true;
-        }
+    // Operate only if there is operator (with or without second operand) OR previous operation
+    if (operation.operator || operation.prevOperator) {
+        operation.operate();
+        operation.updateDisplay();
+        operation.isEqualClicked = true;
     }
 };
 
 const handleBack = target => {
-    if (target.closest('.back')) {
-        operation.isEqualClicked = false;
-        if (operation.secondOperand) {
-            operation.secondOperand = operation.secondOperand.slice(0, -1);
-        } else if (operation.operator) {
-            operation.operator = "";
-        } else if (operation.firstOperand === "ERROR") {
-            operation.clear();
-        } else {
-            operation.firstOperand = operation.firstOperand.slice(0, -1);
-        }
-        operation.updateDisplay();
+    operation.isEqualClicked = false;
+    if (operation.secondOperand) {
+        operation.secondOperand = operation.secondOperand.slice(0, -1);
+    } else if (operation.operator) {
+        operation.operator = "";
+    } else if (operation.firstOperand === "ERROR") {
+        operation.clear();
+    } else {
+        operation.firstOperand = operation.firstOperand.slice(0, -1);
     }
+    operation.updateDisplay();
 };
 
-const handleClearOperation = target => {
-    if (target.closest('.clear')) {
-        operation.clear();
-        operation.updateDisplay();
-    }
+const handleClear = target => {
+    operation.clear();
+    operation.updateDisplay();
+};
+
+const handler = target => {
+    if (target.closest('.digit')) handleOperands(target);
+    else if (target.closest('.operation')) handleOperation(target);
+    else if (target.closest('.equal')) handleEqual(target);
+    else if (target.closest('.back')) handleBack(target);
+    else if (target.closest('.clear')) handleClear(target);
 };
 
 // Keyboard Events
@@ -195,15 +193,7 @@ document.addEventListener('keydown', function (event) {
     // Guard clause (to not fire any event if it's unrelated key)
     if (!target) return;
 
-    formOperation(target);
-
-    handleOperation(target);
-
-    handleEqual(target);
-
-    handleClearOperation(target);
-
-    handleBack(target);
+    handler(target);
 });
 
 // Click Events
@@ -213,15 +203,7 @@ document.addEventListener('click', function (event) {
     // Guard clause (to not fire any event if it's not a button)
     if (!target.closest('.btn')) return;
 
-    formOperation(target);
-
-    handleOperation(target);
-
-    handleEqual(target);
-
-    handleClearOperation(target);
-
-    handleBack(target);
+    handler(target);
 });
 
 // Initial Display
