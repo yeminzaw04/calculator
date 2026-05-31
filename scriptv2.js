@@ -109,7 +109,7 @@ const handleOperands = target => {
     operation.updateDisplay();
 };
 
-const handleOperation = target => {
+const handleOperator = target => {
     // Exit if previous operation results in ERROR
     if (operation.firstOperand === "ERROR") return;
 
@@ -146,7 +146,7 @@ const handleEqual = target => {
     }
 
     // Operate only if there is operator (with or without second operand) OR previous operation
-    if (operation.operator || operation.prevOperator) {
+    if (operation.operator) {
         operation.operate();
         operation.updateDisplay();
         operation.isEqualClicked = true;
