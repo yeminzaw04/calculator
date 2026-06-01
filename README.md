@@ -1,13 +1,16 @@
-# JavaScript Calculator
+# React + Vite
 
-A functional arithmetic calculator built to handle basic operations. This project was an exercise in managing application state and handling user input edge cases.
+This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
 
-## Features
-* Standard operations: Addition, Subtraction, Multiplication, and Division.
-* Decimal point logic (preventing multiple decimals in a single operand).
-* Clear and Delete functionality for correcting input.
+Currently, two official plugins are available:
 
-## Logic & Edge Cases
-* **Operation Chaining:** The logic allows for multiple operations to be strung together (e.g., 5 + 5 + 5) by evaluating the previous pair before moving to the next.
-* **Zero Division:** Added a check to handle division by zero, preventing "Infinity" from breaking the UI layout.
-* **Input Validation:** Restricted the UI from accepting multiple consecutive operators to prevent calculation errors.
+- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
+- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+
+## React Compiler
+
+The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+
+## Expanding the ESLint configuration
+
+If you are developing a production application, we recommend using TypeScript with type-aware lint rules enabled. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) for information on how to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
