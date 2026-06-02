@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { calculate } from './calculatorEngine';
+import { Box, Button, Text, TapArea } from 'gestalt';
+import 'gestalt/dist/gestalt.css';
 
 export default function App() {
 	// Refer to v2's Object to store entire application state
@@ -208,6 +210,75 @@ export default function App() {
 			};
 		});
 	};
+
+	return (
+		/* Master centering wrapper handling viewport coordinate mapping */
+		<Box display="flex" justifyContent="center" alignItems="center" minHeight="100vh" width="100%">
+
+            {/* Main Calculator Chassis Container */}
+			<Box
+				width={440}
+				padding={5}
+				rounding={4}
+				color='darkGray'
+				borderStyle='shadow'
+				display='flex'
+				direction='column'
+			>
+                {/* Display Screen: Horizontal padding matches internal button padding for flush edge alignment */}
+				<Box display='flex' justifyContent='end' paddingX={2} paddingY={4}>
+					<Text color='light' size='600' weight='bold'>
+						{`${calcState.firstOperand || "0"} ${calcState.operator || ""} ${calcState.secondOperand || ""}`}
+					</Text>
+				</Box>
+
+                {/* Core Grid Flow Module */}
+				<Box display='flex' direction='column' width="100%">
+
+                    {/* Row 1 */}
+					<Box display='flex' direction='row'>
+						<Box flex='grow' padding={2}><Button fullWidth text='1' onClick={() => handleOperands("1")} size='lg' /></Box>
+						<Box flex='grow' padding={2}><Button fullWidth text='2' onClick={() => handleOperands("2")} size='lg' /></Box>
+						<Box flex='grow' padding={2}><Button fullWidth text='3' onClick={() => handleOperands("3")} size='lg' /></Box>
+						<Box width={95} padding={2}><Button fullWidth text='+' color='red' onClick={() => handleOperator("+")} size='lg' /></Box>
+					</Box>
+
+                    {/* Row 2 */}
+					<Box display='flex' direction='row'>
+						<Box flex='grow' padding={2}><Button fullWidth text='4' onClick={() => handleOperands("4")} size='lg' /></Box>
+						<Box flex='grow' padding={2}><Button fullWidth text='5' onClick={() => handleOperands("5")} size='lg' /></Box>
+						<Box flex='grow' padding={2}><Button fullWidth text='6' onClick={() => handleOperands("6")} size='lg' /></Box>
+						<Box width={95} padding={2}><Button fullWidth text='-' color='red' onClick={() => handleOperator("-")} size='lg' /></Box>
+					</Box>
+
+                    {/* Row 3 */}
+					<Box display='flex' direction='row'>
+						<Box flex='grow' padding={2}><Button fullWidth text='7' onClick={() => handleOperands("7")} size='lg' /></Box>
+						<Box flex='grow' padding={2}><Button fullWidth text='8' onClick={() => handleOperands("8")} size='lg' /></Box>
+						<Box flex='grow' padding={2}><Button fullWidth text='9' onClick={() => handleOperands("9")} size='lg' /></Box>
+						<Box width={95} padding={2}><Button fullWidth text='*' color='red' onClick={() => handleOperator("*")} size='lg' /></Box>
+					</Box>
+
+                    {/* Row 4: Empty layout box acts as a structural spacer to lock column vertical alignments */}
+					<Box display='flex' direction='row'>
+						<Box flex='grow' padding={2}><Button fullWidth text='0' onClick={() => handleOperands("0")} size='lg' /></Box>
+						<Box flex='grow' padding={2}><Button fullWidth text='.' onClick={() => handleOperands(".")} size='lg' /></Box>
+						<Box flex='grow' padding={2} />
+						<Box width={95} padding={2}><Button fullWidth text='/' color='red' onClick={() => handleOperator("/")} size='lg' /></Box>
+					</Box>
+
+                    {/* Row 5: Utilities Footer with balanced sizing attributes for the equals track */}
+					<Box display='flex' direction='row'>
+						<Box width={102} padding={2}><Button fullWidth text='BACK' onClick={handleBack} color='gray' size='lg' /></Box>
+						<Box width={102} padding={2}><Button fullWidth text='AC' onClick={handleClear} color='gray' size='lg' /></Box>
+						<Box flex='grow' padding={2}><Button fullWidth text='=' color='blue' onClick={handleEqual} size='lg' /></Box>
+					</Box>
+
+				</Box>
+
+			</Box>
+		</Box>
+	);
 };
 
 
