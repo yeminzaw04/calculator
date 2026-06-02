@@ -130,6 +130,42 @@ export default function App() {
 				});
 			};
 		};
+
+		const handleEqual = () => {
+			// Exit if no first operand or previous operation results in ERROR
+			if (!calcState.firstOperand || calcState.firstOperand === "ERROR") return;
+
+			// Local Variables
+			const currentFirst = calcState.firstOperand;
+			const currentSecond = calcState.secondOperand;
+			const currentOperator = calcState.operator;
+
+			// If no second operand, copy from first operand
+			if (currentOperator && !currentSecond) {
+				currentSecond = currentFirst;
+			}
+
+			// If no operator but have previous operation (Repeat Equals)
+			if (!currentOperator && calcState.prevOperator) {
+				currentOperator = calcState.prevOperator;
+				currentSecond = calcState.prevSecondOperand;
+			}
+
+			// Final Guard Clause to exit early if there is no operator
+			if (!currentOperator) return;
+
+			// Now that we have all three parts of the operation, we can execute
+			const evaluation = calculate(currentOperator, currentFirst, currentSecond);
+
+			setCalcState({
+				firstOperand: evaluation,
+				secondOperand: "",
+				prevSecondOperand: currentSecond,
+				operator: "",
+				prevOperator: currentOperator,
+				isEqualClicked: true,
+			});
+		};
 	};
 }
 
