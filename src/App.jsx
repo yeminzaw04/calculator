@@ -87,7 +87,49 @@ export default function App() {
 				firstOperand: updatedFirst,
 				isEqualClicked: false,
 			}));
-		}
+		};
+
+		const handleOperator = (nextOperator) => {
+			const handleOperator = (nextOperator) => {
+				// ERROR Guard Clause
+				if (calcState.firstOperand === "ERROR") return;
+
+				// Create our local sandbox variables to track data
+				let currentFirst = calcState.firstOperand;
+				let currentOperator = calcState.operator;
+				let currentSecond = calcState.secondOperand;
+
+				// If there is no first operand, set it to 0
+				if (!currentFirst) {
+					currentFirst = "0";
+				}
+
+				// Chain operations if there is a second operand
+				if (currentSecond) {
+					// We run the math using our core engine function
+					const evaluation = calculate(currentFirst, currentSecond, currentOperator);
+
+					// Update using the result of the calculation
+					currentFirst = evaluation;
+					currentSecond = ""; // Clear the second operand buffer just like vanilla did
+				}
+
+				// Get an operator only if first operand is not ERROR
+				if (currentFirst !== "ERROR") {
+					currentOperator = nextOperator;
+				}
+
+				// Commit the whole pipeline to the next render
+				setCalcState({
+					firstOperand: currentFirst,
+					secondOperand: currentSecond,
+					operator: currentOperator,
+					prevSecondOperand: calcState.secondOperand, // Keep history tracking safe
+					prevOperator: calcState.operator,
+					isEqualClicked: false, // Actively chaining turns off history flags
+				});
+			};
+		};
 	};
 }
 
