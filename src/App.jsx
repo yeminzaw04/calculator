@@ -65,7 +65,7 @@ export default function App() {
 
 			// Clear only the first operand if equal was clicked and want to start a new operation
 			if (calcState.isEqualClicked) {
-				if (value !== decimal) {
+				if (value !== ".") {
 					currentFirst = "";
 				}
 			}
@@ -88,86 +88,128 @@ export default function App() {
 				isEqualClicked: false,
 			}));
 		};
+	};
 
-		const handleOperator = (nextOperator) => {
-			const handleOperator = (nextOperator) => {
-				// ERROR Guard Clause
-				if (calcState.firstOperand === "ERROR") return;
+	const handleOperator = (nextOperator) => {
 
-				// Create our local sandbox variables to track data
-				let currentFirst = calcState.firstOperand;
-				let currentOperator = calcState.operator;
-				let currentSecond = calcState.secondOperand;
+		// ERROR Guard Clause
+		if (calcState.firstOperand === "ERROR") return;
 
-				// If there is no first operand, set it to 0
-				if (!currentFirst) {
-					currentFirst = "0";
-				}
+		// Create our local sandbox variables to track data
+		let currentFirst = calcState.firstOperand;
+		let currentOperator = calcState.operator;
+		let currentSecond = calcState.secondOperand;
 
-				// Chain operations if there is a second operand
-				if (currentSecond) {
-					// We run the math using our core engine function
-					const evaluation = calculate(currentFirst, currentSecond, currentOperator);
+		// If there is no first operand, set it to 0
+		if (!currentFirst) {
+			currentFirst = "0";
+		}
 
-					// Update using the result of the calculation
-					currentFirst = evaluation;
-					currentSecond = ""; // Clear the second operand buffer just like vanilla did
-				}
-
-				// Get an operator only if first operand is not ERROR
-				if (currentFirst !== "ERROR") {
-					currentOperator = nextOperator;
-				}
-
-				// Commit the whole pipeline to the next render
-				setCalcState({
-					firstOperand: currentFirst,
-					secondOperand: currentSecond,
-					operator: currentOperator,
-					prevSecondOperand: calcState.secondOperand, // Keep history tracking safe
-					prevOperator: calcState.operator,
-					isEqualClicked: false, // Actively chaining turns off history flags
-				});
-			};
-		};
-
-		const handleEqual = () => {
-			// Exit if no first operand or previous operation results in ERROR
-			if (!calcState.firstOperand || calcState.firstOperand === "ERROR") return;
-
-			// Local Variables
-			const currentFirst = calcState.firstOperand;
-			const currentSecond = calcState.secondOperand;
-			const currentOperator = calcState.operator;
-
-			// If no second operand, copy from first operand
-			if (currentOperator && !currentSecond) {
-				currentSecond = currentFirst;
-			}
-
-			// If no operator but have previous operation (Repeat Equals)
-			if (!currentOperator && calcState.prevOperator) {
-				currentOperator = calcState.prevOperator;
-				currentSecond = calcState.prevSecondOperand;
-			}
-
-			// Final Guard Clause to exit early if there is no operator
-			if (!currentOperator) return;
-
-			// Now that we have all three parts of the operation, we can execute
+		// Chain operations if there is a second operand
+		if (currentSecond) {
+			// We run the math using our core engine function
 			const evaluation = calculate(currentOperator, currentFirst, currentSecond);
 
-			setCalcState({
-				firstOperand: evaluation,
-				secondOperand: "",
-				prevSecondOperand: currentSecond,
-				operator: "",
-				prevOperator: currentOperator,
-				isEqualClicked: true,
-			});
-		};
+			// Update using the result of the calculation
+			currentFirst = evaluation;
+			currentSecond = ""; // Clear the second operand buffer just like vanilla did
+		}
+
+		// Get an operator only if first operand is not ERROR
+		if (currentFirst !== "ERROR") {
+			currentOperator = nextOperator;
+		}
+
+		// Commit the whole pipeline to the next render
+		setCalcState({
+			firstOperand: currentFirst,
+			secondOperand: currentSecond,
+			operator: currentOperator,
+			prevSecondOperand: calcState.secondOperand, // Keep history tracking safe
+			prevOperator: calcState.operator,
+			isEqualClicked: false, // Actively chaining turns off history flags
+		});
 	};
-}
+
+	const handleEqual = () => {
+		// Exit if no first operand or previous operation results in ERROR
+		if (!calcState.firstOperand || calcState.firstOperand === "ERROR") return;
+
+		// Local Variables
+		let currentFirst = calcState.firstOperand;
+		let currentSecond = calcState.secondOperand;
+		let currentOperator = calcState.operator;
+
+		// If no second operand, copy from first operand
+		if (currentOperator && !currentSecond) {
+			currentSecond = currentFirst;
+		}
+
+		// If no operator but have previous operation (Repeat Equals)
+		if (!currentOperator && calcState.prevOperator) {
+			currentOperator = calcState.prevOperator;
+			currentSecond = calcState.prevSecondOperand;
+		}
+
+		// Final Guard Clause to exit early if there is no operator
+		if (!currentOperator) return;
+
+		// Now that we have all three parts of the operation, we can execute
+		const evaluation = calculate(currentOperator, currentFirst, currentSecond);
+
+		setCalcState({
+			firstOperand: evaluation,
+			secondOperand: "",
+			prevSecondOperand: currentSecond,
+			operator: "",
+			prevOperator: currentOperator,
+			isEqualClicked: true,
+		});
+	};
+
+	const handleBack = () => {
+		setCalcState(prevState => {
+			// Turn off isEqualClicked whenever Back is clicked
+			const baseState = { ...prevState, isEqualClicked: false };
+
+			// Second Operand being cleared
+			if (prevState.secondOperand) {
+				return {
+					...baseState,
+					secondOperand: prevState.secondOperand.slice(0, -1)
+				};
+			}
+
+			// Operator being cleared
+			if (prevState.operator) {
+				return {
+					...baseState,
+					operator: ""
+				};
+			}
+
+			// ERROR Guard Clause
+			if (prevState.firstOperand === "ERROR") {
+				// Fallback to your existing clear layout properties
+				return {
+					firstOperand: "",
+					secondOperand: "",
+					prevSecondOperand: "",
+					operator: "",
+					prevOperator: "",
+					isEqualClicked: false,
+				};
+			}
+
+			// First Operand being cleared
+			return {
+				...baseState,
+				firstOperand: prevState.firstOperand.slice(0, -1)
+			};
+		});
+	};
+};
+
 
 
 
