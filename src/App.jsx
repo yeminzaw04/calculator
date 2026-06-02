@@ -28,6 +28,25 @@ export default function App() {
 	const handleOperands = value => {
 		// Second Operand
 		if (calcState.operator) {
+			let currentSecond = calcState.secondOperand;
+
+			// Prevent leading decimals
+			if (currentSecond === "" && value === ".") {
+				currentSecond = "0";
+			}
+
+			// Prevent duplicate decimals
+			if (value === "." && currentSecond.includes(".")) {
+				return;
+			}
+
+			// Append and save for Next Render
+			const updatedSecond = currentSecond + value;
+			setCalcState(prevState => ({
+				...prevState,
+				secondOperand: updatedSecond
+			}));
+
 
 		} else { // First Operand
 			let currentFirst = calcState.firstOperand;
